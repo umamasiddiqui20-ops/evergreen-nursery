@@ -1,0 +1,163 @@
+.contact-section {
+  background: #f8faf5;
+  padding: 80px 8%;
+}
+
+.contact-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 50px;
+}
+
+.contact-content {
+  flex: 1;
+}
+
+.contact-content h2 {
+  font-size: 40px;
+  color: #1e5631;
+  margin-bottom: 15px;
+}
+
+.contact-content p {
+  color: #555;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.contact-info {
+  display: flex;
+  gap: 25px;
+  margin-top: 35px;
+}
+
+.contact-info div {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.contact-info h4 {
+  color: #4caf50;
+  margin-bottom: 8px;
+}
+
+
+.newsletter-box {
+  background: #1e5631;
+  color: white;
+  padding: 40px;
+  border-radius: 25px;
+  width: 380px;
+}
+
+.newsletter-box h3 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.email-box {
+  display: flex;
+  margin-top: 25px;
+}
+
+.email-box input {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  outline: none;
+  border-radius: 8px 0 0 8px;
+}
+
+.email-box button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+}
+
+@media(max-width: 900px){
+
+  .contact-container{
+    flex-direction: column;
+  }
+
+  .contact-info{
+    flex-direction: column;
+  }
+
+  .newsletter-box{
+    width: 100%;
+  }
+
+}
+.subscribe-message{
+    margin-top:15px;
+    font-size:15px;
+    font-weight:600;
+    text-align:center;
+    color:#2D6A4F;
+    background:#E8F5E9;
+    padding:10px 15px;
+    border-radius:8px;
+    animation:fadeIn .3s ease-in-out;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(-8px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+.success{
+    background:#E8F5E9;
+    color:#2D6A4F;
+}
+
+.error{
+    background:#FFE5E5;
+    color:#D62828;
+}
+.toast-message{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    min-width:350px;
+    max-width:90%;
+    padding:15px 25px;
+    border-radius:10px;
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
+    text-align:center;
+    z-index:9999;
+    animation:slideDown .4s ease;
+}
+
+.success-toast{
+    background:#2D6A4F;
+}
+
+.error-toast{
+    background:#D62828;
+}
+
+@keyframes slideDown{
+    from{
+        opacity:0;
+        transform:translate(-50%,-40px);
+    }
+    to{
+        opacity:1;
+        transform:translate(-50%,0);
+    }
+}
