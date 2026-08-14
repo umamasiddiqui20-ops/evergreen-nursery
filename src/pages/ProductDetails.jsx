@@ -41,7 +41,7 @@ function ProductDetails() {
         */
 
         const response = await fetch(
-          "http://localhost:5000/api/products"
+          "https://evergreen-nursery-mjbg.vercel.app/api/products"
         );
 
         if (!response.ok) {
