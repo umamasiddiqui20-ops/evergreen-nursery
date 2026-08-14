@@ -9,7 +9,7 @@ const [error, setError] = useState("");
 useEffect(() => {
 const fetchProducts = async () => {
 try {
-const response = await fetch("https://evergreen-nursery-mjbg.vercel.app");
+const response = await fetch("https://evergreen-nursery-mjbg.vercel.app/api/products");
 
     if (!response.ok) {
       throw new Error("Failed to fetch products");
