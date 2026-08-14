@@ -10,10 +10,10 @@ function ProductCard({ product }) {
     <div className="product-card">
 
       <div className="product-image">
-       <img
-  src={`http://localhost:5173${product.image}`}
-  alt={product.name}
-/>
+        <img
+          src={product.image}
+          alt={product.name}
+        />
 
         <span className="stock-badge">
           {product.stock > 0 ? "In Stock" : "Out of Stock"}
