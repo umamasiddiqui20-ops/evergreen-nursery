@@ -6,17 +6,28 @@ import { CartContext } from "../context/CartContext";
 function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext);
 
+  const productId = product._id || product.id;
+
+  const isInStock =
+    typeof product.stock === "number"
+      ? product.stock > 0
+      : product.stock === "In Stock";
+
   return (
     <div className="product-card">
 
       <div className="product-image">
         <img
-          src={product.image}
+          src={
+            product.image?.startsWith("http")
+              ? product.image
+              : product.image
+          }
           alt={product.name}
         />
 
         <span className="stock-badge">
-          {product.stock > 0 ? "In Stock" : "Out of Stock"}
+          {isInStock ? "In Stock" : "Out of Stock"}
         </span>
       </div>
 
@@ -44,7 +55,7 @@ function ProductCard({ product }) {
         <div className="product-buttons">
 
           <Link
-            to={`/product/${product._id}`}
+            to={`/product/${productId}`}
             className="details-link"
           >
             <button className="details-btn">
@@ -55,9 +66,9 @@ function ProductCard({ product }) {
           <button
             className="cart-btn"
             onClick={() => addToCart(product)}
-            disabled={product.stock <= 0}
+            disabled={!isInStock}
           >
-            {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
+            {isInStock ? "Add to Cart" : "Out of Stock"}
           </button>
 
         </div>

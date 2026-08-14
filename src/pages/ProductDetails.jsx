@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { useParams, useNavigate } from "react-router-dom";
+import products from "../data/products";
 
 function ProductDetails() {
   const { addToCart } = useContext(CartContext);
@@ -13,9 +14,35 @@ function ProductDetails() {
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const loadProduct = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
+        setLoading(true);
+        setError("");
+
+        /*
+          First check local products.
+          Best Sellers use products.js
+          and their IDs are 1, 2, 3, 4...
+        */
+
+        const localProduct = products.find(
+          (item) => String(item.id) === String(id)
+        );
+
+        if (localProduct) {
+          setProduct(localProduct);
+          setLoading(false);
+          return;
+        }
+
+        /*
+          If product is not a local product,
+          try MongoDB/backend.
+        */
+
+        const response = await fetch(
+          "http://localhost:5000/api/products"
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch products");
@@ -24,7 +51,7 @@ function ProductDetails() {
         const data = await response.json();
 
         const foundProduct = data.find(
-          (item) => item._id === id
+          (item) => String(item._id) === String(id)
         );
 
         if (!foundProduct) {
@@ -33,15 +60,32 @@ function ProductDetails() {
         }
 
         setProduct(foundProduct);
+
       } catch (err) {
         console.error("Product Details Error:", err);
-        setError("Unable to load product.");
+
+        /*
+          If backend is unavailable, show local product
+          if one exists.
+        */
+
+        const localProduct = products.find(
+          (item) => String(item.id) === String(id)
+        );
+
+        if (localProduct) {
+          setProduct(localProduct);
+          setError("");
+        } else {
+          setError("Unable to load product.");
+        }
+
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProduct();
+    loadProduct();
   }, [id]);
 
   if (loading) {
@@ -60,6 +104,15 @@ function ProductDetails() {
     );
   }
 
+  const isInStock =
+    typeof product.stock === "number"
+      ? product.stock > 0
+      : product.stock === "In Stock";
+
+  const productImages = product.images?.length
+    ? product.images
+    : [product.image, product.image];
+
   return (
     <section className="details">
 
@@ -70,7 +123,7 @@ function ProductDetails() {
         <div className="details-main-image">
 
           <img
-            src={`http://localhost:5173${product.image}`}
+            src={productImages[currentImage]}
             alt={product.name}
             className={currentImage === 1 ? "zoom-image" : ""}
           />
@@ -81,31 +134,21 @@ function ProductDetails() {
 
         <div className="image-thumbnails">
 
-          <button
-            type="button"
-            className={`thumbnail ${
-              currentImage === 0 ? "active" : ""
-            }`}
-            onClick={() => setCurrentImage(0)}
-          >
-            <img
-              src={`http://localhost:5173${product.image}`}
-              alt={product.name}
-            />
-          </button>
-
-          <button
-            type="button"
-            className={`thumbnail ${
-              currentImage === 1 ? "active" : ""
-            }`}
-            onClick={() => setCurrentImage(1)}
-          >
-            <img
-              src={`http://localhost:5173${product.image}`}
-              alt={product.name}
-            />
-          </button>
+          {productImages.slice(0, 2).map((image, index) => (
+            <button
+              key={index}
+              type="button"
+              className={`thumbnail ${
+                currentImage === index ? "active" : ""
+              }`}
+              onClick={() => setCurrentImage(index)}
+            >
+              <img
+                src={image}
+                alt={`${product.name} ${index + 1}`}
+              />
+            </button>
+          ))}
 
         </div>
 
@@ -113,21 +156,16 @@ function ProductDetails() {
 
         <div className="slider-dots">
 
-          <button
-            type="button"
-            className={`slider-dot ${
-              currentImage === 0 ? "active" : ""
-            }`}
-            onClick={() => setCurrentImage(0)}
-          />
-
-          <button
-            type="button"
-            className={`slider-dot ${
-              currentImage === 1 ? "active" : ""
-            }`}
-            onClick={() => setCurrentImage(1)}
-          />
+          {productImages.slice(0, 2).map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              className={`slider-dot ${
+                currentImage === index ? "active" : ""
+              }`}
+              onClick={() => setCurrentImage(index)}
+            />
+          ))}
 
         </div>
 
@@ -164,12 +202,12 @@ function ProductDetails() {
 
         <p>
           <strong>Status:</strong>{" "}
-          {product.stock > 0
-            ? "In Stock"
-            : "Out of Stock"}
+          {isInStock ? "In Stock" : "Out of Stock"}
         </p>
 
-        <p>{product.description}</p>
+        <p>
+          {product.description}
+        </p>
 
 
         {/* BUTTONS */}
@@ -179,9 +217,9 @@ function ProductDetails() {
           <button
             className="cart-btn"
             onClick={() => addToCart(product)}
-            disabled={product.stock <= 0}
+            disabled={!isInStock}
           >
-            {product.stock > 0
+            {isInStock
               ? "Add to Cart"
               : "Out of Stock"}
           </button>
@@ -192,7 +230,7 @@ function ProductDetails() {
               addToCart(product);
               navigate("/cart");
             }}
-            disabled={product.stock <= 0}
+            disabled={!isInStock}
           >
             Buy Now
           </button>
